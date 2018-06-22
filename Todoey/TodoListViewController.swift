@@ -10,11 +10,14 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
 
-    let itemArray = ["item 1", "item 2", "item 3"]
-        
+    let defaults = UserDefaults.standard
+    
+    var itemArray = ["meh"]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        itemArray = defaults.array(forKey: "TodoListArray") as? [String] ?? ["Enter stuff"]
     }
 
     override func didReceiveMemoryWarning() {
@@ -48,6 +51,29 @@ class TodoListViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-
+    // MARK -- add new items
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        
+        var textField = UITextField()
+        
+        let alert = UIAlertController(title: "Add new Todoey item", message: nil, preferredStyle: .alert)
+        
+        let action = UIAlertAction(title: "Add item", style: .default) { (action) in
+            if textField.text != nil {
+                self.itemArray.append(textField.text!)
+                self.defaults.set(self.itemArray, forKey: "TodoListArray")
+                self.tableView.reloadData()
+            }            
+        }
+        
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Create new item"
+            textField = alertTextField
+        }
+        
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
+    }
+    
 }
 
